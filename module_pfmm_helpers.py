@@ -9,12 +9,18 @@
 # Created:     2017-02-10
 #-------------------------------------------------------------------------------
 
-import arcpy, os, sys, datetime, module_pfmm_get
+import datetime
 from calendar import isleap
 
 def passNull(fieldValue, propertyValue):
     if fieldValue != None:
         return fieldValue
+    else:
+        return propertyValue
+
+def decimalToFloat(fieldValue, propertyValue):
+    if fieldValue != None:
+        return float(fieldValue)
     else:
         return propertyValue
 
@@ -26,7 +32,7 @@ def dateToMDYYYY(dateIn):
     return dateStr
 
 def addYears(d, years):
-    # copied from stack overflow
+    """Copied from stack overflow."""
     new_year = d.year + years
     try:
         return d.replace(year=new_year)
@@ -35,3 +41,9 @@ def addYears(d, years):
             isleap(d.year) and not isleap(new_year)):
             return d.replace(year=new_year, day=28)
         raise
+
+def mergeTwoDicts(x, y):
+    """Given two dicts, merge them into a new dict as a shallow copy. Copied from stack overflow."""
+    z = x.copy()
+    z.update(y)
+    return z
