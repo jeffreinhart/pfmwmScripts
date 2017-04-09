@@ -235,22 +235,28 @@ def main():
         }
 
     # check if input is a globalid
-    if lcGlobalId[:1] == '{' and lcGlobalId[-1:] == '}' and len(lcGlobalId) == 38:
-        attrDictOut = getLcAttributesJSON(lcGlobalId)
-        if bool(attrDictOut):
-            dictOutStart['status'] = 'OK'
-            dictOutStart['message'] = 'Valid globalid received, record found.'.format(lcGlobalId)
-            dictOutStart['timestamp'] = int(time.time())
-            dictOut = module_pfmm_helpers.mergeTwoDicts(dictOutStart, attrDictOut)
+    if lcGlobalId:
+        if lcGlobalId[:1] == '{' and lcGlobalId[-1:] == '}' and len(lcGlobalId) == 38:
+            attrDictOut = getLcAttributesJSON(lcGlobalId)
+            if bool(attrDictOut):
+                dictOutStart['status'] = 'OK'
+                dictOutStart['message'] = 'Valid globalid received, record found.'.format(lcGlobalId)
+                dictOutStart['timestamp'] = int(time.time())
+                dictOut = module_pfmm_helpers.mergeTwoDicts(dictOutStart, attrDictOut)
+            else:
+                # empty dictionary
+                dictOutStart['status'] = 'ERROR'
+                dictOutStart['message'] = 'Valid globalid received, but no record found.'.format(lcGlobalId)
+                dictOutStart['timestamp'] = int(time.time())
+                dictOut = dictOutStart
         else:
-            # empty dictionary
             dictOutStart['status'] = 'ERROR'
-            dictOutStart['message'] = 'Valid globalid received, but no record found.'.format(lcGlobalId)
+            dictOutStart['message'] = 'Invalid globalid received.'.format(lcGlobalId)
             dictOutStart['timestamp'] = int(time.time())
             dictOut = dictOutStart
     else:
         dictOutStart['status'] = 'ERROR'
-        dictOutStart['message'] = 'Invalid globalid received.'.format(lcGlobalId)
+        dictOutStart['message'] = 'No globalid received.'.format(lcGlobalId)
         dictOutStart['timestamp'] = int(time.time())
         dictOut = dictOutStart
 

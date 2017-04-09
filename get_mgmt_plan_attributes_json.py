@@ -226,22 +226,28 @@ def main():
         }
 
     # check if input is a globalid
-    if maGlobalId[:1] == '{' and maGlobalId[-1:] == '}' and len(maGlobalId) == 38:
-        attrDictOut = getMgmtPlanAttributesJSON(maGlobalId)
-        if bool(attrDictOut):
-            dictOutStart['status'] = 'OK'
-            dictOutStart['message'] = 'Valid globalid received, record found.'.format(maGlobalId)
-            dictOutStart['timestamp'] = int(time.time())
-            dictOut = module_pfmm_helpers.mergeTwoDicts(dictOutStart, attrDictOut)
+    if maGlobalId:
+        if maGlobalId[:1] == '{' and maGlobalId[-1:] == '}' and len(maGlobalId) == 38:
+            attrDictOut = getMgmtPlanAttributesJSON(maGlobalId)
+            if bool(attrDictOut):
+                dictOutStart['status'] = 'OK'
+                dictOutStart['message'] = 'Valid globalid received, record found.'.format(maGlobalId)
+                dictOutStart['timestamp'] = int(time.time())
+                dictOut = module_pfmm_helpers.mergeTwoDicts(dictOutStart, attrDictOut)
+            else:
+                # empty dictionary
+                dictOutStart['status'] = 'ERROR'
+                dictOutStart['message'] = 'Valid globalid received, but no record found.'.format(maGlobalId)
+                dictOutStart['timestamp'] = int(time.time())
+                dictOut = dictOutStart
         else:
-            # empty dictionary
             dictOutStart['status'] = 'ERROR'
-            dictOutStart['message'] = 'Valid globalid received, but no record found.'.format(maGlobalId)
+            dictOutStart['message'] = 'Invalid globalid received.'.format(maGlobalId)
             dictOutStart['timestamp'] = int(time.time())
             dictOut = dictOutStart
     else:
         dictOutStart['status'] = 'ERROR'
-        dictOutStart['message'] = 'Invalid globalid received.'.format(maGlobalId)
+        dictOutStart['message'] = 'No globalid received.'.format(maGlobalId)
         dictOutStart['timestamp'] = int(time.time())
         dictOut = dictOutStart
 
