@@ -48,3 +48,4 @@ Temporary Items
 pfmwm_scripts.psproj
 module_connection_properties.py
 psycopg27parking.txt
+*.pyc

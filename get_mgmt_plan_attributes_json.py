@@ -1,10 +1,10 @@
 #-------------------------------------------------------------------------------
-# Updated:     2017-02-08
+# Updated:     2017-04-14
 #
 # Name:        get_mgmt_plan_attributes_json.py
 #
-# Purpose:     Geoprocessing service to get all attributes for a management_plan
-#              polygon that are needed in the PFMWM from related records in PFMM.
+# Purpose:     Get all attributes for a management_plan polygon that are needed
+#              in the PFMWM from related records in PFMM.
 #
 # Author:      Jeff Reinhart
 #
@@ -26,11 +26,11 @@ def getMgmtPlanAttributesJSON(maGlobalId):
         # Get party_contact.planwriter
         pcPwObj = module_pfmm_get.cls_party_contact(mpObj.party_contact_guid)
 
-        # Get related ownership_block object
+        # Get related ownership_block object and child tables
         obObj = module_pfmm_get.cls_ownership_block(mpObj.ownership_block_guid)
+        obChildTbls = module_pfmm_get.relatedRecordGlobalIds('ownership_blocks', obObj.globalid)
 
         # Get ownership parcels
-        obChildTbls = module_pfmm_get.relatedRecordGlobalIds('ownership_blocks', obObj.globalid)
         opGids = obChildTbls['ownership_parcels']
 
         # Get party_cont_own_prcl, counties, and parcel PINs
@@ -55,6 +55,19 @@ def getMgmtPlanAttributesJSON(maGlobalId):
         # Get party_contact.landcontact
         pcLoGid = module_pfmm_get.lastPcopPcGid(pcopGids)
         pcLoObj = module_pfmm_get.cls_party_contact(pcLoGid)
+
+        # Get other contacts
+        otherContacts = ""
+        pcobGids = obChildTbls['party_cont_own_blks']
+        for pcobGid in pcobGids:
+            pcobObj = module_pfmm_get.cls_party_cont_own_blk(pcobGid)
+            pcOtherContGid = pcobObj.party_contact_guid
+            if pcOtherContGid != pcLoObj.globalid:
+                pcOtherContOjb = module_pfmm_get.cls_party_contact(pcOtherContGid)
+                otherContacts += "{0} {1}, ".format(
+                    pcOtherContOjb.person_first_name,
+                    pcOtherContOjb.person_last_name)
+        otherContacts = otherContacts[:-2]
 
         # Build list for html
         attrDict["html"] = [
@@ -132,6 +145,12 @@ def getMgmtPlanAttributesJSON(maGlobalId):
                 "type": "text",
                 "name": "party_contacts.phone_line_1.landcontact",
                 "value": pcLoObj.phone_line_1
+            },
+            {
+                "caption": "Other Contacts",
+                "type": "text",
+                "name": "other_contacts",
+                "value": otherContacts
             },
             {
                 "caption": "Plan Writer First Name",
