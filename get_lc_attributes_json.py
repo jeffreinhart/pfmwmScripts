@@ -124,37 +124,43 @@ def getLcAttributesJSON(lcGid):
             for mpGid in mpGidList:
                 mpObj = module_pfmm_get.cls_management_plan(mpGid)
                 if mpObj.globalIdExists:
-                    # start temporary dict
-                    tempMpDict = dict()
-                    # county list to string
-                    tempMpDict["counties"] = ", ".join(sorted(set(countyList)))
-                    # management plan attributes
-                    tempMpDict["management_plans.globalid"] = mpGid
-                    tempMpDict["management_plans.plan_date"] = module_pfmm_helpers.dateToMDYYYY(mpObj.plan_date)
-                    tempMpDict["management_plans.acres_plan"] = mpObj.acres_plan
-                    expirationDate = module_pfmm_helpers.addYears(mpObj.plan_date, 10)
-                    tempMpDict["expiration_date"] = module_pfmm_helpers.dateToMDYYYY(expirationDate)
-                    # get plan writer
-                    pcPwObj = module_pfmm_get.cls_party_contact(mpObj.party_contact_guid)
-                    tempMpDict["plan_writer"] = "{0} {1} - {2}".format(
-                        pcPwObj.person_first_name,
-                        pcPwObj.person_last_name,
-                        pcPwObj.business_name)
-                    # trs from owner block
-                    tempMpDict["pls_section"] = "T{0}N-R{1}{2}-S{3}".format(
-                        obObj.town,
-                        obObj.range,
-                        obObj.rdir,
-                        obObj.sect)
-                    # get registration status
-                    if mpObj.registered_date != datetime.datetime(1900,1,1,0,0,0):
-                        tempMpDict["registered"] = "Yes"
-                    else:
-                        tempMpDict["registered"] = "No"
-                    # add if is owner
-                    tempMpDict["is_owner"] = isOwner
-                    # add dict to attrDict
-                    attrDict["mpDgv"].append(tempMpDict)
+                    # match definition query for service
+                    if mpObj.plan_type == 'Stewardship' and \
+                       (mpObj.status == 'Complete' or mpObj.status == 'Revised'):
+                        # start temporary dict
+                        tempMpDict = dict()
+                        # county list to string
+                        tempMpDict["counties"] = ", ".join(sorted(set(countyList)))
+                        # management plan attributes
+                        tempMpDict["management_plans.globalid"] = mpGid
+                        tempMpDict["management_plans.plan_date"] = module_pfmm_helpers.dateToMDYYYY(mpObj.plan_date)
+                        tempMpDict["management_plans.acres_plan"] = mpObj.acres_plan
+                        expirationDate = module_pfmm_helpers.addYears(mpObj.plan_date, 10)
+                        tempMpDict["expiration_date"] = module_pfmm_helpers.dateToMDYYYY(expirationDate)
+                        # get plan writer
+                        pcPwObj = module_pfmm_get.cls_party_contact(mpObj.party_contact_guid)
+                        tempMpDict["plan_writer"] = "{0} {1} - {2}".format(
+                            pcPwObj.person_first_name,
+                            pcPwObj.person_last_name,
+                            pcPwObj.business_name)
+                        # trs from owner block
+                        tempMpDict["pls_section"] = "T{0}N-R{1}{2}-S{3}".format(
+                            obObj.town,
+                            obObj.range,
+                            obObj.rdir,
+                            obObj.sect)
+                        # get registration status
+                        tempMpDict["registered"] = module_pfmm_helpers.registrationStatus(mpObj.plan_date, mpObj.registered_date)
+                        # Get 2c qualification status
+                        twoCstatusReturn = module_pfmm_helpers.twoCstatus(
+                            mpObj.plan_date,
+                            mpObj.assigned_date,
+                            mpObj.registered_date)
+                        tempMpDict["two_c_short"] = twoCstatusReturn[0]
+                        # add if is owner
+                        tempMpDict["is_owner"] = isOwner
+                        # add dict to attrDict
+                        attrDict["mpDgv"].append(tempMpDict)
 
         # Get contact_events
         attrDict["ceDgv"] = []

@@ -13,7 +13,7 @@
 
 
 import module_pfmm_get, module_pfmm_helpers
-import json, cgi, time
+import json, cgi, datetime, time
 
 def getMgmtPlanAttributesJSON(maGlobalId):
     # Output
@@ -68,6 +68,18 @@ def getMgmtPlanAttributesJSON(maGlobalId):
                     pcOtherContOjb.person_first_name,
                     pcOtherContOjb.person_last_name)
         otherContacts = otherContacts[:-2]
+
+        # Get registration status
+        regMessage = module_pfmm_helpers.registrationStatus(
+            mpObj.plan_date,
+            mpObj.registered_date)
+
+        # Get 2c qualification status
+        twoCstatusReturn = module_pfmm_helpers.twoCstatus(
+            mpObj.plan_date,
+            mpObj.assigned_date,
+            mpObj.registered_date)
+        twoCmessage = twoCstatusReturn[1]
 
         # Build list for html
         attrDict["html"] = [
@@ -204,13 +216,16 @@ def getMgmtPlanAttributesJSON(maGlobalId):
                 "value": mpObj.reg_num
             },
             {
-                "caption": "Registration Date",
+                "caption": "Registered",
                 "type": "text",
-                "name": "management_plans.registered_date",
-                "datepicker": {
-                    "minDate": "01/01/1900"
-                },
-                "value": module_pfmm_helpers.dateToMDYYYY(mpObj.registered_date)
+                "name": "registered",
+                "value": regMessage
+            },
+            {
+                "caption": "2c {0} Qualification".format(datetime.datetime.today().year),
+                "type": "text",
+                "name": "two_c_message",
+                "value": twoCmessage
             },
             {
                 "caption": "Counties",
