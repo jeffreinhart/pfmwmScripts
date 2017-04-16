@@ -133,10 +133,10 @@ def getLcAttributesJSON(lcGid):
                         tempMpDict["counties"] = ", ".join(sorted(set(countyList)))
                         # management plan attributes
                         tempMpDict["management_plans.globalid"] = mpGid
-                        tempMpDict["management_plans.plan_date"] = module_pfmm_helpers.dateToMDYYYY(mpObj.plan_date)
+                        tempMpDict["management_plans.plan_date"] = module_pfmm_helpers.dateToYYYYMMDD(mpObj.plan_date)
                         tempMpDict["management_plans.acres_plan"] = mpObj.acres_plan
                         expirationDate = module_pfmm_helpers.addYears(mpObj.plan_date, 10)
-                        tempMpDict["expiration_date"] = module_pfmm_helpers.dateToMDYYYY(expirationDate)
+                        tempMpDict["expiration_date"] = module_pfmm_helpers.dateToYYYYMMDD(expirationDate)
                         # get plan writer
                         pcPwObj = module_pfmm_get.cls_party_contact(mpObj.party_contact_guid)
                         tempMpDict["plan_writer"] = "{0} {1} - {2}".format(
@@ -172,7 +172,7 @@ def getLcAttributesJSON(lcGid):
             contactEventObj = module_pfmm_get.cls_contact_event(contactEventGid)
             # add values to temp dict
             tempCeDict["contact_events.globalid"] = contactEventGid
-            tempCeDict["contact_events.contact_date"] = module_pfmm_helpers.dateToMDYYYY(contactEventObj.contact_date)
+            tempCeDict["contact_events.contact_date"] = module_pfmm_helpers.dateToYYYYMMDD(contactEventObj.contact_date)
             tempCeDict["contact_events.subject"] = contactEventObj.subject
             tempCeDict["contact_events.contact_event_type"] = contactEventObj.contact_event_type
             tempCeDict["contact_events.summary"] = contactEventObj.summary
@@ -200,9 +200,9 @@ def getLcAttributesJSON(lcGid):
             paChildTables = module_pfmm_get.relatedRecordGlobalIds('project_areas', paGid)
             # add values to temp dict
             tempPaDict["project_areas.globalid"] = paGid
-            tempPaDict["project_areas.anticipated_project_start_date"] = module_pfmm_helpers.dateToMDYYYY(paObj.anticipated_project_start_date)
+            tempPaDict["project_areas.anticipated_project_start_date"] = module_pfmm_helpers.dateToYYYYMMDD(paObj.anticipated_project_start_date)
             tempPaDict["project_areas.total_cost_share_approved"] = "{0:.2f}".format(paObj.total_cost_share_approved)
-            tempPaDict["project_areas.practices_certified_date"] = module_pfmm_helpers.dateToMDYYYY(paObj.practices_certified_date)
+            tempPaDict["project_areas.practices_certified_date"] = module_pfmm_helpers.dateToYYYYMMDD(paObj.practices_certified_date)
             # get plan writer and add
             pcWriterObj = module_pfmm_get.cls_party_contact(paObj.party_contact_writer_guid)
             tempPaDict["writer"] = "{0} {1}".format(

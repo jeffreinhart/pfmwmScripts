@@ -31,6 +31,13 @@ def dateToMDYYYY(dateIn):
         dateStr = "{dt.month}/{dt.day}/{dt.year}".format(dt = dateIn)
     return dateStr
 
+def dateToYYYYMMDD(dateIn):
+    if dateIn == datetime.datetime(1900,1,1,0,0,0) or dateIn is None:
+        dateStr = ''
+    else:
+        dateStr = "{0}-{1}-{2}".format(dateIn.year, dateIn.strftime('%m'), dateIn.strftime('%d'))
+    return dateStr
+
 def addYears(d, years):
     """Copied from stack overflow."""
     new_year = d.year + years
