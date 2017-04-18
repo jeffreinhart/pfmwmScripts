@@ -31,7 +31,7 @@ def printClassDefinitionScript(dataset):
     classScript +=  "             ]\n"
 
     # build query
-    classScript +=  "        self.query = 'select {0} from "+datasetShortName+" where globalid = %s'.format(', '.join(self.fieldList))\n"
+    classScript +=  "        self.query = 'select {0} from "+datasetShortName+"_evw where globalid = %s'.format(', '.join(self.fieldList))\n"
 
     # build each property
     for field in fieldList:

@@ -56,7 +56,7 @@ def relatedRecordGlobalIds(tableName, globalId):
         if isinstance(childTable, (list)):
             tableName = childTable[0]
             fieldName = childTable[1]
-            query = "select globalid from {0} where {1} = %s".format(tableName, fieldName)
+            query = "select globalid from {0}_evw where {1} = %s".format(tableName, fieldName)
             conn = psycopg2.connect(dsn)
             with conn.cursor() as curs:
                 curs.execute(query, [globalId])
@@ -66,7 +66,7 @@ def relatedRecordGlobalIds(tableName, globalId):
             # add to dictionary as table_name.foreign_key_field for dictionary key
             childTablesDict["{0}.{1}".format(tableName, fieldName)] = gidList
         else:
-            query = "select globalid from {0} where {1}_guid = %s".format(childTable, tableName[:-1])
+            query = "select globalid from {0}_evw where {1}_guid = %s".format(childTable, tableName[:-1])
             conn = psycopg2.connect(dsn)
             with conn.cursor() as curs:
                 curs.execute(query, [globalId])
@@ -135,7 +135,7 @@ class cls_party_contact:
             'email_address_2_unsubscribe',
             'vendor_number',
              ]
-        self.query = 'select {0} from party_contacts where globalid = %s'.format(', '.join(self.fieldList))
+        self.query = 'select {0} from party_contacts_evw where globalid = %s'.format(', '.join(self.fieldList))
         self.globalid = ''
         self.person_first_name = ''
         self.person_middle_name = ''
@@ -277,7 +277,7 @@ class cls_management_plan:
             'cs_invoice_number',
             'reg_letter_grant',
              ]
-        self.query = 'select {0} from management_plans where globalid = %s'.format(', '.join(self.fieldList))
+        self.query = 'select {0} from management_plans_evw where globalid = %s'.format(', '.join(self.fieldList))
         self.globalid = ''
         self.ownership_block_guid = ''
         self.status = ''
@@ -386,7 +386,7 @@ class cls_ownership_block:
             'orig_id',
             'rdir',
              ]
-        self.query = 'select {0} from ownership_blocks where globalid = %s'.format(', '.join(self.fieldList))
+        self.query = 'select {0} from ownership_blocks_evw where globalid = %s'.format(', '.join(self.fieldList))
         self.globalid = ''
         self.coun = 0
         self.acres_deed = 0
@@ -430,7 +430,7 @@ class cls_ownership_parcel:
             'orig_id',
             'ownership_block_guid',
              ]
-        self.query = 'select {0} from ownership_parcels where globalid = %s'.format(', '.join(self.fieldList))
+        self.query = 'select {0} from ownership_parcels_evw where globalid = %s'.format(', '.join(self.fieldList))
         self.globalid = ''
         self.coun = 0
         self.acres_deed = 0
@@ -468,7 +468,7 @@ class cls_party_cont_own_prcl:
             'ownership_block_contct_type',
             'comments',
              ]
-        self.query = 'select {0} from party_cont_own_prcl where globalid = %s'.format(', '.join(self.fieldList))
+        self.query = 'select {0} from party_cont_own_prcl_evw where globalid = %s'.format(', '.join(self.fieldList))
         self.globalid = ''
         self.party_contact_guid = ''
         self.ownership_parcel_guid = ''
@@ -502,7 +502,7 @@ class cls_party_cont_own_blk:
             'ownership_block_guid',
             'ownership_block_contact_type',
              ]
-        self.query = 'select {0} from party_cont_own_blks where globalid = %s'.format(', '.join(self.fieldList))
+        self.query = 'select {0} from party_cont_own_blks_evw where globalid = %s'.format(', '.join(self.fieldList))
         self.globalid = ''
         self.party_contact_guid = ''
         self.ownership_block_guid = ''
@@ -535,7 +535,7 @@ class cls_contact_event:
             'contact_date',
             'party_contact_3_guid',
              ]
-        self.query = 'select {0} from contact_events where globalid = %s'.format(', '.join(self.fieldList))
+        self.query = 'select {0} from contact_events_evw where globalid = %s'.format(', '.join(self.fieldList))
         self.globalid = ''
         self.party_contact_1_guid = ''
         self.party_contact_2_guid = ''
@@ -599,7 +599,7 @@ class cls_project_area:
             'pa_cultural_heritage',
             'invoice_number',
              ]
-        self.query = 'select {0} from project_areas where globalid = %s'.format(', '.join(self.fieldList))
+        self.query = 'select {0} from project_areas_evw where globalid = %s'.format(', '.join(self.fieldList))
         self.globalid = ''
         self.party_contact_applicant_guid = ''
         self.acres_gis = 0
@@ -689,7 +689,7 @@ class cls_project_practice:
             'comments',
             'project_area_guid',
              ]
-        self.query = 'select {0} from project_practices where globalid = %s'.format(', '.join(self.fieldList))
+        self.query = 'select {0} from project_practices_evw where globalid = %s'.format(', '.join(self.fieldList))
         self.globalid = ''
         self.map_label = ''
         self.anticipated_practice_start_date = datetime.datetime(1900,1,1,0,0,0)
