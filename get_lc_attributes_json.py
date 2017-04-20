@@ -201,7 +201,7 @@ def getLcAttributesJSON(lcGid):
             # add values to temp dict
             tempPaDict["project_areas.globalid"] = paGid
             tempPaDict["project_areas.anticipated_project_start_date"] = module_pfmm_helpers.dateToYYYYMMDD(paObj.anticipated_project_start_date)
-            tempPaDict["project_areas.total_cost_share_approved"] = "{0:.2f}".format(paObj.total_cost_share_approved)
+            tempPaDict["project_areas.total_cost_share_approved"] = paObj.total_cost_share_approved
             tempPaDict["project_areas.practices_certified_date"] = module_pfmm_helpers.dateToYYYYMMDD(paObj.practices_certified_date)
             # get plan writer and add
             pcWriterObj = module_pfmm_get.cls_party_contact(paObj.party_contact_writer_guid)
