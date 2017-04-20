@@ -52,6 +52,9 @@ def addYears(d, years):
 def zeroTime(d):
     return d.replace(hour=0, minute=0, second=0, microsecond=0)
 
+def firstLastBusType(fname, lname, busType):
+    return "{0} {1} - {2}".format(fname, lname, busType)
+
 def mergeTwoDicts(x, y):
     """Given two dicts, merge them into a new dict as a shallow copy. Copied from stack overflow."""
     z = x.copy()
