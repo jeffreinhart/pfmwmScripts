@@ -113,3 +113,24 @@ def twoCstatus(planDate, assignedDate, regDate):
                 twoCmessage = "Yes, was received by May 1, plan is current, and registration was completed by June 14."
                 twoCmessageShort = "Yes"
     return [twoCmessageShort, twoCmessage]
+
+def buildName(fName, mName, lName, nPre, nSuf, sName, bName):
+    name = ''
+    if nPre == 'c/o':
+        # special case for care of
+        name = "{0} c/o {1} {2} {3}".format(bName, fName, mName, lName)
+    elif lName == '' and bName != '':
+        name = bName
+    else:
+        # build name without spouse name or with spouse name
+        if sName == '':
+            # no spouse name
+            name = "{0} {1} {2} {3} {4}".format(nPre, fName, mName, lName, nSuf)
+        else:
+            # with spouse name
+            name = "{0} {1} {2} {3} & {4} {5}".format(nPre, fName, mName, nSuf, sName, lName)
+    # replace any multiple spaces that resulted from null input parameters and
+    # remove leading and trailing spaces
+    name = ' '.join(name.split())
+    # return
+    return name

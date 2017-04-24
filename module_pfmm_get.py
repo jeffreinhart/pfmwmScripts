@@ -17,6 +17,10 @@ import module_pfmm_helpers, module_connection_properties
 connection = module_connection_properties.clsConnectionProperties()
 dsn = connection.dsn
 
+# Use views or not
+##view = ''
+view = '_evw'
+
 def relatedRecordGlobalIds(tableName, globalId):
     '''Returns dictionary of tables with key as table name and value as list of
     related globalid values. Parent immediate child dictionary as key = parent
@@ -42,6 +46,8 @@ def relatedRecordGlobalIds(tableName, globalId):
             ['contact_events', 'party_contact_1_guid'],
             ['contact_events', 'party_contact_2_guid'],
             ['contact_events', 'party_contact_3_guid'],
+            ['management_plans', 'party_contact_guid'],
+            ['management_plans', 'party_contact_2_guid'],
             ['project_areas', 'party_contact_applicant_guid'],
             ['project_areas', 'party_contact_writer_guid'],
             ['project_areas', 'party_contact_entered_guid'],
@@ -56,7 +62,7 @@ def relatedRecordGlobalIds(tableName, globalId):
         if isinstance(childTable, (list)):
             tableName = childTable[0]
             fieldName = childTable[1]
-            query = "select globalid from {0}_evw where {1} = %s".format(tableName, fieldName)
+            query = "select globalid from {0}{1} where {2} = %s".format(tableName, view, fieldName)
             conn = psycopg2.connect(dsn)
             with conn.cursor() as curs:
                 curs.execute(query, [globalId])
@@ -66,7 +72,7 @@ def relatedRecordGlobalIds(tableName, globalId):
             # add to dictionary as table_name.foreign_key_field for dictionary key
             childTablesDict["{0}.{1}".format(tableName, fieldName)] = gidList
         else:
-            query = "select globalid from {0}_evw where {1}_guid = %s".format(childTable, tableName[:-1])
+            query = "select globalid from {0}{1} where {2}_guid = %s".format(childTable, view, tableName[:-1])
             conn = psycopg2.connect(dsn)
             with conn.cursor() as curs:
                 curs.execute(query, [globalId])
@@ -135,7 +141,7 @@ class cls_party_contact:
             'email_address_2_unsubscribe',
             'vendor_number',
              ]
-        self.query = 'select {0} from party_contacts_evw where globalid = %s'.format(', '.join(self.fieldList))
+        self.query = 'select {0} from party_contacts{1} where globalid = %s'.format(', '.join(self.fieldList), view)
         self.globalid = ''
         self.person_first_name = ''
         self.person_middle_name = ''
@@ -277,7 +283,7 @@ class cls_management_plan:
             'cs_invoice_number',
             'reg_letter_grant',
              ]
-        self.query = 'select {0} from management_plans_evw where globalid = %s'.format(', '.join(self.fieldList))
+        self.query = 'select {0} from management_plans{1} where globalid = %s'.format(', '.join(self.fieldList), view)
         self.globalid = ''
         self.ownership_block_guid = ''
         self.status = ''
@@ -386,7 +392,7 @@ class cls_ownership_block:
             'orig_id',
             'rdir',
              ]
-        self.query = 'select {0} from ownership_blocks_evw where globalid = %s'.format(', '.join(self.fieldList))
+        self.query = 'select {0} from ownership_blocks{1} where globalid = %s'.format(', '.join(self.fieldList), view)
         self.globalid = ''
         self.coun = 0
         self.acres_deed = 0
@@ -430,7 +436,7 @@ class cls_ownership_parcel:
             'orig_id',
             'ownership_block_guid',
              ]
-        self.query = 'select {0} from ownership_parcels_evw where globalid = %s'.format(', '.join(self.fieldList))
+        self.query = 'select {0} from ownership_parcels{1} where globalid = %s'.format(', '.join(self.fieldList), view)
         self.globalid = ''
         self.coun = 0
         self.acres_deed = 0
@@ -468,7 +474,7 @@ class cls_party_cont_own_prcl:
             'ownership_block_contct_type',
             'comments',
              ]
-        self.query = 'select {0} from party_cont_own_prcl_evw where globalid = %s'.format(', '.join(self.fieldList))
+        self.query = 'select {0} from party_cont_own_prcl{1} where globalid = %s'.format(', '.join(self.fieldList), view)
         self.globalid = ''
         self.party_contact_guid = ''
         self.ownership_parcel_guid = ''
@@ -502,7 +508,7 @@ class cls_party_cont_own_blk:
             'ownership_block_guid',
             'ownership_block_contact_type',
              ]
-        self.query = 'select {0} from party_cont_own_blks_evw where globalid = %s'.format(', '.join(self.fieldList))
+        self.query = 'select {0} from party_cont_own_blks{1} where globalid = %s'.format(', '.join(self.fieldList), view)
         self.globalid = ''
         self.party_contact_guid = ''
         self.ownership_block_guid = ''
@@ -535,7 +541,7 @@ class cls_contact_event:
             'contact_date',
             'party_contact_3_guid',
              ]
-        self.query = 'select {0} from contact_events_evw where globalid = %s'.format(', '.join(self.fieldList))
+        self.query = 'select {0} from contact_events{1} where globalid = %s'.format(', '.join(self.fieldList), view)
         self.globalid = ''
         self.party_contact_1_guid = ''
         self.party_contact_2_guid = ''
@@ -599,7 +605,7 @@ class cls_project_area:
             'pa_cultural_heritage',
             'invoice_number',
              ]
-        self.query = 'select {0} from project_areas_evw where globalid = %s'.format(', '.join(self.fieldList))
+        self.query = 'select {0} from project_areas{1} where globalid = %s'.format(', '.join(self.fieldList), view)
         self.globalid = ''
         self.party_contact_applicant_guid = ''
         self.acres_gis = 0
@@ -689,7 +695,7 @@ class cls_project_practice:
             'comments',
             'project_area_guid',
              ]
-        self.query = 'select {0} from project_practices_evw where globalid = %s'.format(', '.join(self.fieldList))
+        self.query = 'select {0} from project_practices{1} where globalid = %s'.format(', '.join(self.fieldList), view)
         self.globalid = ''
         self.map_label = ''
         self.anticipated_practice_start_date = datetime.datetime(1900,1,1,0,0,0)
